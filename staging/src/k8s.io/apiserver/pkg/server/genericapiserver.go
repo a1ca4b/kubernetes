@@ -493,6 +493,7 @@ func (s *GenericAPIServer) PrepareRun() preparedGenericAPIServer {
 // |                       listenerStoppedCh
 // |                               |
 // |      HTTPServerStoppedListening (httpServerStoppedListeningCh)
+// api-server 实际 run 的方法
 func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) error {
 	delayedStopCh := s.lifecycleSignals.AfterShutdownDelayDuration
 	shutdownInitiatedCh := s.lifecycleSignals.ShutdownInitiated

@@ -76,7 +76,7 @@ func init() {
 
 // NewAPIServerCommand creates a *cobra.Command object with default parameters
 func NewAPIServerCommand() *cobra.Command {
-	s := options.NewServerRunOptions()
+	s := options.NewServerRunOptions() //获得一个默认的 ServerRunOptions
 	cmd := &cobra.Command{
 		Use: "kube-apiserver",
 		Long: `The Kubernetes API server validates and configures data
@@ -104,6 +104,7 @@ cluster's shared state through which all other components interact.`,
 			cliflag.PrintFlags(fs)
 
 			// set default options
+			// 根据 cobra 的 flags 完成初始化 ServerRunOptions
 			completedOptions, err := s.Complete()
 			if err != nil {
 				return err
@@ -127,6 +128,7 @@ cluster's shared state through which all other components interact.`,
 		},
 	}
 
+	//根据 cobra 的 flags 设置 ServerRunOptions
 	fs := cmd.Flags()
 	namedFlagSets := s.Flags()
 	verflag.AddFlags(namedFlagSets.FlagSet("global"))
