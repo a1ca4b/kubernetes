@@ -38,6 +38,7 @@ func SetupSignalHandler() <-chan struct{} {
 // Only one of SetupSignalContext and SetupSignalHandler should be called, and only can
 // be called once.
 func SetupSignalContext() context.Context {
+	//控制该函数只能调用一次
 	close(onlyOneSignalHandler) // panics when called twice
 
 	shutdownHandler = make(chan os.Signal, 2)
@@ -45,10 +46,10 @@ func SetupSignalContext() context.Context {
 	ctx, cancel := context.WithCancel(context.Background())
 	signal.Notify(shutdownHandler, shutdownSignals...)
 	go func() {
-		<-shutdownHandler
-		cancel()
-		<-shutdownHandler
-		os.Exit(1) // second signal. Exit directly.
+		<-shutdownHandler // 接收到第一次手动关闭信号
+		cancel()          // 通知主流程优雅退出，退出完会执行 os.Exit，不会执行下述代码
+		<-shutdownHandler // 如果接收到第二次信号，直接退出
+		os.Exit(1)        // second signal. Exit directly.
 	}()
 
 	return ctx
