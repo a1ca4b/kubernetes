@@ -498,6 +498,8 @@ func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) error {
 	delayedStopCh := s.lifecycleSignals.AfterShutdownDelayDuration
 	shutdownInitiatedCh := s.lifecycleSignals.ShutdownInitiated
 
+	//一些特殊情况和优雅退出
+	//close(stopCh) 所有监听该 channel 的 goroutine 会接收到零返回值，继续往下执行
 	// Clean up resources on shutdown.
 	defer s.Destroy()
 
@@ -577,6 +579,7 @@ func (s preparedGenericAPIServer) Run(stopCh <-chan struct{}) error {
 		}
 	}
 
+	//启动 http-server
 	stoppedCh, listenerStoppedCh, err := s.NonBlockingRun(stopHttpServerCh, shutdownTimeout)
 	if err != nil {
 		return err
