@@ -131,11 +131,13 @@ func createAggregatorConfig(
 }
 
 func createAggregatorServer(aggregatorConfig aggregatorapiserver.CompletedConfig, delegateAPIServer genericapiserver.DelegationTarget, apiExtensionInformers apiextensionsinformers.SharedInformerFactory, crdAPIEnabled bool) (*aggregatorapiserver.APIAggregator, error) {
+	//1、初始化 aggregatorServer
 	aggregatorServer, err := aggregatorConfig.NewWithDelegate(delegateAPIServer)
 	if err != nil {
 		return nil, err
 	}
 
+	//2、初始化 auto-registration controller
 	// create controllers for auto-registration
 	apiRegistrationClient, err := apiregistrationclient.NewForConfig(aggregatorConfig.GenericConfig.LoopbackClientConfig)
 	if err != nil {

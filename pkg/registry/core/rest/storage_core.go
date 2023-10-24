@@ -158,6 +158,7 @@ func (c *legacyProvider) NewRESTStorage(apiResourceConfigSource serverstorage.AP
 		return genericapiserver.APIGroupInfo{}, err
 	}
 
+	// Storage 初始化
 	podTemplateStorage, err := podtemplatestore.NewREST(restOptionsGetter)
 	if err != nil {
 		return genericapiserver.APIGroupInfo{}, err
@@ -223,6 +224,7 @@ func (c *legacyProvider) NewRESTStorage(apiResourceConfigSource serverstorage.AP
 		}
 	}
 
+	// 保存 resource http path 与 storage 对应关系
 	if resource := "pods"; apiResourceConfigSource.ResourceEnabled(corev1.SchemeGroupVersion.WithResource(resource)) {
 		storage[resource] = podStorage.Pod
 		storage[resource+"/attach"] = podStorage.Attach

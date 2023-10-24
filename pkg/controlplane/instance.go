@@ -370,11 +370,13 @@ func (c completedConfig) New(delegationTarget genericapiserver.DelegationTarget)
 		return nil, fmt.Errorf("Master.New() called with empty config.KubeletClientConfig")
 	}
 
+	//1、初始化 GenericAPIServer
 	s, err := c.GenericConfig.New("kube-apiserver", delegationTarget)
 	if err != nil {
 		return nil, err
 	}
 
+	//2、注册 logs 相关路由
 	if c.ExtraConfig.EnableLogsSupport {
 		routes.Logs{}.Install(s.Handler.GoRestfulContainer)
 	}
@@ -449,6 +451,7 @@ func (c completedConfig) New(delegationTarget genericapiserver.DelegationTarget)
 		return nil, err
 	}
 
+	// 安装 APIs
 	// The order here is preserved in discovery.
 	// If resources with identical names exist in more than one of these groups (e.g. "deployments.apps"" and "deployments.extensions"),
 	// the order of this list determines which group an unqualified resource name (e.g. "deployments") should prefer.

@@ -69,7 +69,6 @@ type REST struct {
 
 // NewStorage returns a RESTStorage object that will work against pods.
 func NewStorage(optsGetter generic.RESTOptionsGetter, k client.ConnectionInfoGetter, proxyTransport http.RoundTripper, podDisruptionBudgetClient policyclient.PodDisruptionBudgetsGetter) (PodStorage, error) {
-
 	store := &genericregistry.Store{
 		NewFunc:                   func() runtime.Object { return &api.Pod{} },
 		NewListFunc:               func() runtime.Object { return &api.PodList{} },
@@ -85,6 +84,8 @@ func NewStorage(optsGetter generic.RESTOptionsGetter, k client.ConnectionInfoGet
 
 		TableConvertor: printerstorage.TableConvertor{TableGenerator: printers.NewTableGenerator().With(printersinternal.AddHandlers)},
 	}
+
+	//调用 store.CompleteWithOptions
 	options := &generic.StoreOptions{
 		RESTOptions: optsGetter,
 		AttrFunc:    registrypod.GetAttrs,
@@ -101,6 +102,7 @@ func NewStorage(optsGetter generic.RESTOptionsGetter, k client.ConnectionInfoGet
 	ephemeralContainersStore := *store
 	ephemeralContainersStore.UpdateStrategy = registrypod.EphemeralContainersStrategy
 
+	// PodStorage 对象
 	bindingREST := &BindingREST{store: store}
 	return PodStorage{
 		Pod:                 &REST{store, proxyTransport},
